@@ -70,7 +70,11 @@ static void *libgl;
 
 static void open_libgl(void)
 {
+#ifdef __RASPBIAN__
+	libgl = dlopen("libbrcmGLESv2.so", RTLD_LAZY | RTLD_GLOBAL);
+#else
 	libgl = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
+#endif
 }
 
 static void close_libgl(void)
@@ -78,11 +82,15 @@ static void close_libgl(void)
 	dlclose(libgl);
 }
 
+void(*eglGetProcAddress(char const * procname))(void);
 static void *get_proc(const char *proc)
 {
 	void *res;
-
-	res = (void*)glXGetProcAddress((const GLubyte *) proc);
+#ifdef __RASPBIAN__
+	res = (void*)eglGetProcAddress((char const *) proc);
+#else
+    res = (void*)glXGetProcAddress((const GLubyte *)proc);
+#endif
 	if (!res)
 		res = dlsym(libgl, proc);
 	return res;
@@ -94,7 +102,10 @@ static struct {
 } version;
 
 static int parse_version(void)
-{
+{    
+#ifdef __RASPBIAN__ /* glGetString(GL_VERSION) */
+    return 0;
+#endif
 	if (!glGetIntegerv)
 		return -1;
 

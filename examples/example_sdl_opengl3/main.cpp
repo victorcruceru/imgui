@@ -38,6 +38,7 @@ using namespace gl;
 // Main code
 int main(int, char**)
 {
+#ifndef __RASPBIAN__    
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
@@ -46,6 +47,7 @@ int main(int, char**)
         printf("Error: %s\n", SDL_GetError());
         return -1;
     }
+#endif
 
     // Decide GL+GLSL versions
 #if __APPLE__
@@ -56,8 +58,13 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #else
+#ifndef __RASPBIAN__
     // GL 3.0 + GLSL 130
     const char* glsl_version = "#version 130";
+#else
+    const char* glsl_version = "#version 100";
+#endif    
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);

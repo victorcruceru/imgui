@@ -64,8 +64,12 @@ ifeq ($(UNAME_S), Linux) #LINUX
 	ifeq ($(OS_RELEASE_ID), raspbian) #raspbian
 		ECHO_MESSAGE = "raspbian"
 		SDL2_CONFIG = /usr/local/bin/sdl2-config
-		LIBS += -ldl `$(SDL2_CONFIG) --libs`  `PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig/ pkg-config --libs bcm_host brcmglesv2 brcmegl`
-		CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2 -D__RASPBIAN__ -I`$(SDL2_CONFIG) --prefix`/include `$(SDL2_CONFIG) --cflags` `PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig/ pkg-config --cflags bcm_host brcmglesv2`
+		LIBS += -ldl `$(SDL2_CONFIG) --libs` \
+		`PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig/ pkg-config --libs bcm_host brcmglesv2 brcmegl`
+		CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2 -D__RASPBIAN__ \
+		-I`$(SDL2_CONFIG) --prefix`/include \
+		`$(SDL2_CONFIG) --cflags` \
+		`PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig/ pkg-config --cflags bcm_host brcmglesv2`
 	else 
 		ECHO_MESSAGE = "Linux"
 		LIBS += -lGL -ldl `sdl2-config --libs`
